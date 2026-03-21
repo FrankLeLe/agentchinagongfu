@@ -27,13 +27,13 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.SECONDME_CLIENT_SECRET,
       profile(profile) {
         return {
-          id: profile.data.userId,
-          name: profile.data.name,
-          email: profile.data.email,
-          image: profile.data.avatar,
-          secondmeUserId: profile.data.userId,
-          secondmeRoute: profile.data.route,
-          bio: profile.data.bio || profile.data.selfIntroduction,
+          id: profile.data?.userId || profile.id,
+          name: profile.data?.name || profile.name,
+          email: profile.data?.email || profile.email,
+          image: profile.data?.avatar || profile.picture,
+          secondmeUserId: profile.data?.userId || profile.id,
+          secondmeRoute: profile.data?.route || '',
+          bio: profile.data?.bio || profile.data?.selfIntroduction || '',
         }
       },
     },
