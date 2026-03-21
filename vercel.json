@@ -1,7 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "rootDirectory": ".",
   "regions": ["hnd1"],
   "env": {
     "DATABASE_URL": "file:./prisma/dev.db"
