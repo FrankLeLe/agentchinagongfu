@@ -1,59 +1,66 @@
 import { NextAuthOptions } from 'next-auth'
 
+// SecondMe 官方推荐配置
+const oauthUrl = process.env.SECONDME_OAUTH_URL || 'https://go.second.me/oauth/'
+const clientId = process.env.SECONDME_CLIENT_ID
+const clientSecret = process.env.SECONDME_CLIENT_SECRET
+const redirectUri = process.env.SECONDME_REDIRECT_URI
+const apiBaseUrl = process.env.SECONDME_API_BASE_URL || 'https://api.mindverse.com/gate/lab'
+
+console.log('===== SecondMe OAuth Configuration =====')
+console.log('oauthUrl:', oauthUrl)
+console.log('clientId:', clientId ? `${clientId.substring(0,8)}...` : 'MISSING')
+console.log('clientSecret:', clientSecret ? 'set' : 'MISSING')
+console.log('redirectUri:', redirectUri)
+console.log('apiBaseUrl:', apiBaseUrl)
+console.log('========================================')
+
+if (!clientId || !clientSecret || !redirectUri) {
+  console.error('❌ Missing OAuth configuration!')
+  throw new Error('OAuth configuration incomplete')
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     {
       id: 'secondme',
       name: 'SecondMe',
       type: 'oauth',
-      version: '2.0',
-      authorization: {
-        url: process.env.SECONDME_OAUTH_URL || 'https://go.second.me/oauth/',
-        params: {
-          scope: 'user.info user.info.shades',
-          response_type: 'code',
-        },
-      },
-      token: {
-        url: process.env.SECONDME_TOKEN_ENDPOINT || 'https://api.mindverse.com/gate/lab/api/oauth/token/code',
-        params: {
-          grant_type: 'authorization_code',
-        },
-      },
-      userinfo: {
-        url: process.env.SECONDME_API_BASE_URL + '/api/secondme/user/info' || 'https://api.mindverse.com/gate/lab/api/secondme/user/info',
-      },
-      clientId: process.env.SECONDME_CLIENT_ID,
-      clientSecret: process.env.SECONDME_CLIENT_SECRET,
+      clientId: clientId!,
+      clientSecret: clientSecret!,
+      // 使用简单字符串格式
+      authorization: `${oauthUrl.replace(/\/$/, '')}?scope=${encodeURIComponent('user.info user.info.shades')}`,
+      token: `${apiBaseUrl}/api/oauth/token/code`,
+      userinfo: `${apiBaseUrl}/api/secondme/user/info`,
       profile(profile) {
+        // SecondMe 返回格式：{ code: 0, data: { userId, name, email, avatar, ... } }
+        console.log('OAuth profile received:', JSON.stringify(profile, null, 2))
+        const userData = profile.data || profile
         return {
-          id: profile.data?.userId || profile.id,
-          name: profile.data?.name || profile.name,
-          email: profile.data?.email || profile.email,
-          image: profile.data?.avatar || profile.picture,
-          secondmeUserId: profile.data?.userId || profile.id,
-          secondmeRoute: profile.data?.route || '',
-          bio: profile.data?.bio || profile.data?.selfIntroduction || '',
+          id: userData.userId || profile.id,
+          name: userData.name || profile.name,
+          email: userData.email || profile.email,
+          image: userData.avatar || profile.picture,
+          secondmeUserId: userData.userId || profile.id,
+          secondmeRoute: userData.route || '',
+          bio: userData.bio || userData.selfIntroduction || '',
         }
       },
     },
   ],
   callbacks: {
     async jwt({ token, account, profile }) {
-      if (account && profile) {
+      if (account) {
         token.accessToken = account.access_token
-        token.refreshToken = account.refresh_token
-        const p = profile as any
-        token.secondmeUserId = p.secondmeUserId
-        token.secondmeRoute = p.secondmeRoute
+      }
+      if (profile) {
+        token.secondmeUserId = (profile as any).secondmeUserId
       }
       return token
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken
-      session.refreshToken = token.refreshToken
-      session.secondmeUserId = token.secondmeUserId
-      session.secondmeRoute = token.secondmeRoute
+      session.user.secondmeUserId = token.secondmeUserId
       return session
     },
   },
