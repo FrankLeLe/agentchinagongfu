@@ -28,7 +28,6 @@ export const authOptions: NextAuthOptions = {
       type: 'oauth',
       clientId: clientId!,
       clientSecret: clientSecret!,
-      // 使用简单字符串格式
       authorization: `${oauthUrl.replace(/\/$/, '')}?scope=${encodeURIComponent('user.info user.info.shades')}`,
       token: `${apiBaseUrl}/api/oauth/token/code`,
       userinfo: `${apiBaseUrl}/api/secondme/user/info`,
@@ -48,6 +47,28 @@ export const authOptions: NextAuthOptions = {
       },
     },
   ],
+  // 配置 Cookie 以支持 localhost 开发
+  cookies: {
+    state: {
+      name: `next-auth.state`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: false,
+      },
+    },
+    pkceCodeVerifier: {
+      name: `next-auth.pkce.code_verifier`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: false,
+        maxAge: 60 * 15, // 15 minutes
+      },
+    },
+  },
   callbacks: {
     async jwt({ token, account, profile }) {
       if (account) {

@@ -34,16 +34,16 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  secondmeUserId String?  @unique
+  id             String    @id @default(cuid())
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  secondmeUserId String?   @unique
   secondmeRoute  String?
-  bio           String?
+  bio            String?
+  accounts       Account[]
+  sessions       Session[]
 }
 
 model VerificationToken {
@@ -54,40 +54,37 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// 侠客表
 model Hero {
-  id              String    @id @default(cuid())
-  userId          String    @unique
-  name            String
-  avatar          String?
-  route           String?
-  mbti            String?
-  sectId          String
-  faction         String    @default("traditional")
-  power           Int       @default(100)
-  attack          Int       @default(100)
-  speed           Int       @default(100)
-  defense         Int       @default(100)
-  reputation      Int       @default(1000)
-  totalPower      Int       @default(400)
-  winStreak       Int       @default(0)
-  totalWins       Int       @default(0)
-  totalBattles    Int       @default(0)
-  title           String?
-  points          Int       @default(0)
-  lastLoginDate   DateTime?
-  loginStreak     Int       @default(0)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  
-  sect            Sect      @relation(fields: [sectId], references: [id])
-  ownedSkills     PlayerSkill[]
+  id            String        @id @default(cuid())
+  userId        String        @unique
+  name          String
+  avatar        String?
+  route         String?
+  mbti          String?
+  sectId        String
+  faction       String        @default("traditional")
+  power         Int           @default(100)
+  attack        Int           @default(100)
+  speed         Int           @default(100)
+  defense       Int           @default(100)
+  reputation    Int           @default(1000)
+  totalPower    Int           @default(400)
+  winStreak     Int           @default(0)
+  totalWins     Int           @default(0)
+  totalBattles  Int           @default(0)
+  title         String?
+  points        Int           @default(0)
+  lastLoginDate DateTime?
+  loginStreak   Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  sect          Sect          @relation(fields: [sectId], references: [id])
+  ownedSkills   PlayerSkill[]
 }
 
-// 门派表
 model Sect {
-  id          String   @id @default(cuid())
-  name        String   @unique
+  id          String  @id @default(cuid())
+  name        String  @unique
   type        String
   mbtiTypes   String
   location    String?
@@ -99,23 +96,21 @@ model Sect {
   heroes      Hero[]
 }
 
-// 战斗记录
 model Battle {
-  id          String   @id @default(cuid())
-  challengerId String
-  opponentId  String
-  winnerId    String?
+  id              String   @id @default(cuid())
+  challengerId    String
+  opponentId      String
+  winnerId        String?
   challengerSkill String?
   opponentSkill   String?
-  rounds      Int      @default(0)
-  challengerHp Int      @default(100)
-  opponentHp  Int      @default(100)
-  pointsEarned Int     @default(2)
-  type        String   @default("friendly")
-  createdAt   DateTime @default(now())
+  rounds          Int      @default(0)
+  challengerHp    Int      @default(100)
+  opponentHp      Int      @default(100)
+  pointsEarned    Int      @default(2)
+  type            String   @default("friendly")
+  createdAt       DateTime @default(now())
 }
 
-// 积分流水
 model PointTransaction {
   id          String   @id @default(cuid())
   userId      String
@@ -126,60 +121,55 @@ model PointTransaction {
   createdAt   DateTime @default(now())
 }
 
-// 聊天消息
 model ChatMessage {
-  id          String   @id @default(cuid())
-  channelId   String
-  userId      String
-  userName    String
-  content     String
-  type        String   @default("text")
-  likes       Int      @default(0)
-  isDeleted   Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  channelId String
+  userId    String
+  userName  String
+  content   String
+  type      String   @default("text")
+  likes     Int      @default(0)
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
 
-// 礼物
 model Gift {
-  id          String   @id @default(cuid())
-  name        String   @unique
+  id          String  @id @default(cuid())
+  name        String  @unique
   type        String
   price       Int
   effect      Int
   description String
-  isLimited   Boolean  @default(false)
+  isLimited   Boolean @default(false)
 }
 
-// 玩家拥有的武功
 model PlayerSkill {
   id          String   @id @default(cuid())
   userId      String
   skillName   String
   purchasedAt DateTime @default(now())
   hero        Hero     @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  
+
   @@unique([userId, skillName])
 }
 
-// 礼物赠送记录
 model GiftTransaction {
-  id          String   @id @default(cuid())
-  senderId    String
-  receiverId  String
-  giftName    String
-  message     String?
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  giftName   String
+  message    String?
+  createdAt  DateTime @default(now())
 }
 
-// 好感度
 model Relationship {
-  id          String   @id @default(cuid())
-  userId      String
-  targetId    String
-  intimacy    Int      @default(0)
-  level       String   @default("stranger")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id        String   @id @default(cuid())
+  userId    String
+  targetId  String
+  intimacy  Int      @default(0)
+  level     String   @default("stranger")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([userId, targetId])
 }
