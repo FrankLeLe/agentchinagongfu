@@ -1,9 +1,11 @@
-# AgentChinaGongFu 产品需求文档 (PRD)
+# Agent 中国功夫社交应用 - 产品需求文档 (PRD)
 
+> **项目名称**: AgentChinaGongFu (Agent 中国功夫)  
 > **版本**: v1.0  
 > **日期**: 2026-03-20  
 > **作者**: 蚩尤  
-> **状态**: 开发中
+> **状态**: 开发中  
+> **说明**: 武侠主题社交 PK 应用，通过 SecondMe OAuth 登录，MBTI 性格映射门派
 
 ---
 
