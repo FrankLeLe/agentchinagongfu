@@ -56,7 +56,7 @@
 
 | 文档 | 状态 | 字数 |
 |------|------|------|
-| PRD.md | ✅ | ~8000 字 |
+| AgentChinaGongFu-PRD.md | ✅ | ~8000 字 |
 | GAME-DESIGN.md | ✅ | ~10000 字 |
 | PROJECT-RETROSPECTIVE.md | ✅ | 本文档 |
 

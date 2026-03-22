@@ -374,7 +374,7 @@ agent-china-gongfu/
 ├── prisma/
 │   └── schema.prisma
 ├── docs/
-│   ├── PRD.md
+│   ├── AgentChinaGongFu-PRD.md
 │   ├── GAME-DESIGN.md
 │   └── API.md
 └── package.json
